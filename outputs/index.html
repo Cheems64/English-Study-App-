@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f8f8f5" />
+    <meta name="description" content="一款陪你每天学习英语的轻量打卡应用" />
+    <link rel="manifest" href="./manifest.json" />
+    <title>Daylight English</title>
+    <link rel="stylesheet" href="./app.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <main class="app-main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow" id="todayLabel">TODAY · 10月 6日</p>
+            <h1>早上好，Ming <span class="sun-mark" aria-hidden="true">✦</span></h1>
+          </div>
+          <button class="icon-button avatar-button" id="profileButton" aria-label="打开个人资料" title="个人资料">M</button>
+        </header>
+
+        <section class="hero-summary" aria-labelledby="summaryTitle">
+          <div class="summary-copy">
+            <div class="streak-line"><span class="flame" aria-hidden="true">✦</span><strong id="streakCount">12</strong> 天连续学习</div>
+            <h2 id="summaryTitle">今天只要出现，<br />就已经在变好。</h2>
+            <p id="summaryCaption">完成 6 个小任务，保持今天的节奏。</p>
+          </div>
+          <div class="progress-orbit" aria-label="今日进度">
+            <svg viewBox="0 0 104 104" role="img" aria-label="今日完成 0%">
+              <circle class="orbit-track" cx="52" cy="52" r="44"></circle>
+              <circle class="orbit-value" id="progressRing" cx="52" cy="52" r="44"></circle>
+            </svg>
+            <div class="orbit-label"><strong id="progressPercent">0%</strong><span>今日</span></div>
+          </div>
+        </section>
+
+        <section class="mode-panel" aria-label="学习模式">
+          <div class="mode-heading">
+            <div>
+              <p class="section-kicker">今日节奏</p>
+              <h3 id="modeTitle">完整模式</h3>
+            </div>
+            <span class="time-chip" id="timeChip">约 45 分钟</span>
+          </div>
+          <div class="segmented-control" role="tablist" aria-label="选择今日节奏">
+            <button class="segment is-active" data-mode="full" role="tab" aria-selected="true">完整模式</button>
+            <button class="segment" data-mode="minimum" role="tab" aria-selected="false">最低任务</button>
+          </div>
+          <p class="mode-note" id="modeNote">状态正常时，按完整路径积累输入和重复。</p>
+        </section>
+
+        <section class="task-section" aria-labelledby="taskTitle">
+          <div class="section-header">
+            <div>
+              <p class="section-kicker">CHECK IN</p>
+              <h3 id="taskTitle">今日英语任务</h3>
+            </div>
+            <button class="text-button" id="resetButton" type="button">重新开始</button>
+          </div>
+          <div class="task-list" id="taskList"></div>
+        </section>
+
+        <section class="review-section" aria-labelledby="reviewTitle">
+          <div class="section-header">
+            <div>
+              <p class="section-kicker">SPACED REVIEW</p>
+              <h3 id="reviewTitle">单词复习队列</h3>
+            </div>
+            <button class="text-button" id="reviewButton" type="button">开始复习 <span aria-hidden="true">→</span></button>
+          </div>
+          <div class="review-grid">
+            <article class="review-card review-card--today">
+              <span class="review-number">18</span>
+              <span class="review-label">今天到期</span>
+              <span class="review-hint">主动回忆</span>
+            </article>
+            <article class="review-card review-card--soon">
+              <span class="review-number">24</span>
+              <span class="review-label">3 天后</span>
+              <span class="review-hint">轻松再遇见</span>
+            </article>
+            <article class="review-card review-card--later">
+              <span class="review-number">31</span>
+              <span class="review-label">7 天后</span>
+              <span class="review-hint">长期记忆</span>
+            </article>
+          </div>
+        </section>
+
+        <section class="reward-section" aria-labelledby="rewardTitle">
+          <div class="reward-art" aria-hidden="true">
+            <span class="reward-spark reward-spark--one">✦</span>
+            <span class="reward-spark reward-spark--two">✧</span>
+            <div class="reward-sun"></div>
+            <div class="reward-book"><span></span></div>
+          </div>
+          <div class="reward-copy">
+            <p class="section-kicker">今日小奖励</p>
+            <h3 id="rewardTitle">给坚持一个小小回应</h3>
+            <p>完成今天的任务后，打开一张随机卡片。</p>
+            <button class="primary-button" id="rewardButton" type="button"><span aria-hidden="true">✦</span> 打开今日奖励</button>
+          </div>
+        </section>
+
+        <section class="week-section" aria-labelledby="weekTitle">
+          <div class="section-header">
+            <div>
+              <p class="section-kicker">LAST 7 DAYS</p>
+              <h3 id="weekTitle">本周节奏</h3>
+            </div>
+            <span class="week-total">4 / 7 天</span>
+          </div>
+          <div class="week-bars" aria-label="最近七天学习时长">
+            <div class="day-bar"><span class="bar-value" style="height: 38%"></span><span>一</span></div>
+            <div class="day-bar"><span class="bar-value" style="height: 66%"></span><span>二</span></div>
+            <div class="day-bar"><span class="bar-value" style="height: 54%"></span><span>三</span></div>
+            <div class="day-bar"><span class="bar-value" style="height: 82%"></span><span>四</span></div>
+            <div class="day-bar"><span class="bar-value is-current" style="height: 20%"></span><span>五</span></div>
+            <div class="day-bar"><span class="bar-value is-muted" style="height: 9%"></span><span>六</span></div>
+            <div class="day-bar"><span class="bar-value is-muted" style="height: 9%"></span><span>日</span></div>
+          </div>
+        </section>
+      </main>
+
+      <nav class="bottom-nav" aria-label="主导航">
+        <button class="nav-item is-active" type="button" aria-current="page"><span aria-hidden="true">⌂</span><span>今日</span></button>
+        <button class="nav-item" type="button" id="navReview"><span aria-hidden="true">◌</span><span>复习</span></button>
+        <button class="nav-item" type="button" id="navStats"><span aria-hidden="true">▥</span><span>进度</span></button>
+        <button class="nav-item" type="button" id="navSettings"><span aria-hidden="true">⋯</span><span>更多</span></button>
+      </nav>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div class="modal-backdrop" id="rewardModal" aria-hidden="true">
+      <div class="reward-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <button class="modal-close" id="closeModal" type="button" aria-label="关闭">×</button>
+        <div class="modal-confetti" aria-hidden="true"><span>✦</span><span>✧</span><span>✦</span></div>
+        <p class="section-kicker">今日奖励已解锁</p>
+        <h2 id="modalTitle">你为今天留出了时间。</h2>
+        <div class="reward-card-reveal" id="rewardReveal"><span class="reveal-icon">✦</span><span class="reveal-label">点击揭晓</span></div>
+        <p class="modal-message" id="modalMessage">完成一个小动作，记忆就多一条回家的路。</p>
+        <button class="primary-button primary-button--full" id="revealButton" type="button">揭晓卡片</button>
+      </div>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "name": "Daylight English",
+  "short_name": "Daylight",
+  "lang": "zh-CN",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f7f7f3",
+  "theme_color": "#f8f8f5",
+  "description": "每天出现一点点，英语就会慢慢变成自己的。"
+}
