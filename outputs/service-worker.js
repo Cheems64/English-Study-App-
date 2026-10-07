@@ -1,4 +1,4 @@
-const CACHE_NAME = "daylight-english-v1";
+const CACHE_NAME = "daylight-english-v2";
 const APP_SHELL = ["./", "./index.html", "./app.css", "./app.js", "./manifest.json"];
 
 self.addEventListener("install", (event) => {

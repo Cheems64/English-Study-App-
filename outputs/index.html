@@ -55,6 +55,7 @@
             <div>
               <p class="section-kicker">CHECK IN</p>
               <h3 id="taskTitle">今日英语任务</h3>
+              <p class="task-feedback" id="taskFeedback">先完成一个最小动作，今天就开始了。</p>
             </div>
             <button class="text-button" id="resetButton" type="button">重新开始</button>
           </div>
@@ -89,7 +90,8 @@
         </section>
 
         <section class="reward-section" aria-labelledby="rewardTitle">
-          <div class="reward-art" aria-hidden="true">
+          <div class="reward-art" id="rewardArt" aria-hidden="true">
+            <img class="reward-photo" id="rewardPreviewImage" alt="" />
             <span class="reward-spark reward-spark--one">✦</span>
             <span class="reward-spark reward-spark--two">✧</span>
             <div class="reward-sun"></div>
@@ -97,8 +99,8 @@
           </div>
           <div class="reward-copy">
             <p class="section-kicker">今日小奖励</p>
-            <h3 id="rewardTitle">给坚持一个小小回应</h3>
-            <p>完成今天的任务后，打开一张随机卡片。</p>
+            <h3 id="rewardTitle">从自然和宇宙里带回一张卡片</h3>
+            <p id="rewardStatus">完成今天的任务后，联网随机取一则自然或宇宙内容。</p>
             <button class="primary-button" id="rewardButton" type="button"><span aria-hidden="true">✦</span> 打开今日奖励</button>
           </div>
         </section>
@@ -109,29 +111,43 @@
               <p class="section-kicker">LAST 7 DAYS</p>
               <h3 id="weekTitle">本周节奏</h3>
             </div>
-            <span class="week-total">4 / 7 天</span>
+            <span class="week-total" id="weekTotal">0 / 7 天</span>
           </div>
-          <div class="week-bars" aria-label="最近七天学习时长">
-            <div class="day-bar"><span class="bar-value" style="height: 38%"></span><span>一</span></div>
-            <div class="day-bar"><span class="bar-value" style="height: 66%"></span><span>二</span></div>
-            <div class="day-bar"><span class="bar-value" style="height: 54%"></span><span>三</span></div>
-            <div class="day-bar"><span class="bar-value" style="height: 82%"></span><span>四</span></div>
-            <div class="day-bar"><span class="bar-value is-current" style="height: 20%"></span><span>五</span></div>
-            <div class="day-bar"><span class="bar-value is-muted" style="height: 9%"></span><span>六</span></div>
-            <div class="day-bar"><span class="bar-value is-muted" style="height: 9%"></span><span>日</span></div>
-          </div>
+          <p class="week-caption" id="weekCaption">你的每天完成情况会显示在这里。</p>
+          <div class="week-days" id="weekDays" aria-label="本周每天的任务完成情况"></div>
         </section>
       </main>
 
       <nav class="bottom-nav" aria-label="主导航">
         <button class="nav-item is-active" type="button" aria-current="page"><span aria-hidden="true">⌂</span><span>今日</span></button>
         <button class="nav-item" type="button" id="navReview"><span aria-hidden="true">◌</span><span>复习</span></button>
-        <button class="nav-item" type="button" id="navStats"><span aria-hidden="true">▥</span><span>进度</span></button>
-        <button class="nav-item" type="button" id="navSettings"><span aria-hidden="true">⋯</span><span>更多</span></button>
+        <button class="nav-item" type="button" id="navStats"><span aria-hidden="true">▥</span><span>本周</span></button>
+        <button class="nav-item" type="button" id="navMore"><span aria-hidden="true">⋯</span><span>更多</span></button>
       </nav>
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div class="modal-backdrop" id="menuModal" aria-hidden="true">
+      <div class="menu-modal" role="dialog" aria-modal="true" aria-labelledby="menuTitle">
+        <button class="modal-close" id="closeMenu" type="button" aria-label="关闭">×</button>
+        <p class="section-kicker">DAYLIGHT MENU</p>
+        <h2 id="menuTitle">你的学习空间</h2>
+        <button class="menu-action" id="openHistoryButton" type="button"><span class="menu-action-icon">▥</span><span><strong>历史周报</strong><small>查看之前每一周的完成情况</small></span><span aria-hidden="true">→</span></button>
+        <button class="menu-action" id="menuTipsButton" type="button"><span class="menu-action-icon">✦</span><span><strong>学习提醒</strong><small>每天出现一点点，保持重复就好</small></span><span aria-hidden="true">→</span></button>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="historyModal" aria-hidden="true">
+      <div class="history-modal" role="dialog" aria-modal="true" aria-labelledby="historyTitle">
+        <div class="history-header">
+          <div><p class="section-kicker">YOUR RHYTHM</p><h2 id="historyTitle">历史周报</h2></div>
+          <button class="modal-close" id="closeHistory" type="button" aria-label="关闭">×</button>
+        </div>
+        <p class="history-intro">每一周不需要完美，只要看见自己有没有继续回来。</p>
+        <div class="history-weeks" id="historyWeeks"></div>
+      </div>
+    </div>
+
     <div class="modal-backdrop" id="rewardModal" aria-hidden="true">
       <div class="reward-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <button class="modal-close" id="closeModal" type="button" aria-label="关闭">×</button>
