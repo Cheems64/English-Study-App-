@@ -264,18 +264,22 @@ function renderRewardCard(reward) {
   revealButton.textContent = "收下这份鼓励";
 }
 
-function timeoutFetch(url, timeout = 8500) {
+async function fetchJson(url, timeout = 5000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
-  return fetch(url, { signal: controller.signal, mode: "cors" }).finally(() => clearTimeout(timer));
+  try {
+    const response = await fetch(url, { signal: controller.signal, mode: "cors", cache: "no-store" });
+    if (!response.ok) throw new Error(`request failed: ${response.status}`);
+    return await response.json();
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 async function fetchCommonsReward() {
   const category = Math.random() > 0.5 ? "Nature" : "Astronomy";
   const api = `https://commons.wikimedia.org/w/api.php?action=query&generator=categorymembers&gcmtitle=Category:${category}&gcmtype=file&gcmlimit=30&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=900&format=json&origin=*`;
-  const response = await timeoutFetch(api);
-  if (!response.ok) throw new Error("commons unavailable");
-  const data = await response.json();
+  const data = await fetchJson(api);
   const pages = Object.values(data.query?.pages || {}).filter((page) => page.imageinfo?.[0]?.url);
   if (!pages.length) throw new Error("no commons image");
   const page = pages[Math.floor(Math.random() * pages.length)];
@@ -288,9 +292,7 @@ async function fetchCommonsReward() {
 async function fetchWikipediaReward() {
   const term = ["动物", "植物", "天文", "宇宙", "自然保护"][Math.floor(Math.random() * 5)];
   const api = `https://zh.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(term)}&gsrlimit=20&prop=extracts|pageimages&exintro=1&explaintext=1&piprop=thumbnail&pithumbsize=900&format=json&origin=*`;
-  const response = await timeoutFetch(api);
-  if (!response.ok) throw new Error("wikipedia unavailable");
-  const data = await response.json();
+  const data = await fetchJson(api);
   const pages = Object.values(data.query?.pages || {}).filter((page) => page.extract || page.thumbnail?.source);
   if (!pages.length) throw new Error("no wikipedia result");
   const page = pages[Math.floor(Math.random() * pages.length)];
@@ -300,25 +302,32 @@ async function fetchWikipediaReward() {
 async function fetchOnlineReward() {
   if (!navigator.onLine) return null;
   const providers = Math.random() > 0.5 ? [fetchCommonsReward, fetchWikipediaReward] : [fetchWikipediaReward, fetchCommonsReward];
-  for (const provider of providers) {
-    try { return await provider(); } catch (error) { /* try the next public source */ }
+  try {
+    return await Promise.any(providers.map((provider) => provider()));
+  } catch (error) {
+    return null;
   }
-  return null;
 }
 
 async function prepareReward() {
-  if (rewardRequest || state.pendingReward?.date === todayKey()) return;
+  if (state.pendingReward?.date === todayKey()) return state.pendingReward;
+  if (rewardRequest) return rewardRequest;
   rewardStatus.textContent = navigator.onLine ? "正在从自然和宇宙内容里随机挑选一张卡片…" : "当前离线，完成后会送你一张离线鼓励卡片。";
-  rewardRequest = fetchOnlineReward().then((reward) => {
+  rewardRequest = (async () => {
+    const reward = await fetchOnlineReward();
     const finalReward = reward || { ...fallbackRewards[Math.floor(Math.random() * fallbackRewards.length)], date: todayKey() };
     finalReward.date = todayKey();
     state.pendingReward = finalReward;
     saveState();
     renderRewardPreview(finalReward);
-    rewardStatus.textContent = reward ? "已准备好一张来自自然或宇宙的随机卡片。" : "联网内容暂时不可用，已准备一张离线鼓励卡片。";
+    rewardStatus.textContent = reward ? "已准备好一张来自自然或宇宙的随机卡片。" : "联网内容暂时不可用，已准备一张备用卡片。";
     return finalReward;
-  }).catch(() => null).finally(() => { rewardRequest = null; });
-  await rewardRequest;
+  })();
+  try {
+    return await rewardRequest;
+  } finally {
+    rewardRequest = null;
+  }
 }
 
 function renderRewardPreview(reward = state.pendingReward) {
@@ -336,8 +345,7 @@ async function revealReward() {
   if (rewardReveal.classList.contains("is-revealed")) { closeModal(rewardModal); return; }
   revealButton.disabled = true;
   revealButton.textContent = "正在寻找一张卡片…";
-  const reward = state.pendingReward?.date === todayKey() ? state.pendingReward : await fetchOnlineReward();
-  const finalReward = reward || { ...fallbackRewards[Math.floor(Math.random() * fallbackRewards.length)], date: todayKey() };
+  const finalReward = state.pendingReward?.date === todayKey() ? state.pendingReward : await prepareReward();
   state.pendingReward = finalReward;
   state.rewardRevealed = true;
   saveState();
